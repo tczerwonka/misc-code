@@ -156,6 +156,9 @@ def main():
             #state is high, exit
             print("\tfan already on, exiting.")
             report_fan_status(1)
+            #fan status file being updated because turn off needs to happen
+            #N minutes AFTER the value drops
+            write_fan_state_file()
             sys.exit(0)
         else:
             #radon high - turn fan on
