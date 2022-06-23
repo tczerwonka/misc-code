@@ -1,0 +1,22 @@
+Wed Jun 22 16:20:29 CDT 2022
+
+#generic
+ 1005  curl http://192.168.1.88/cm?cmnd=Power%20Off
+ 1006  curl http://192.168.1.88/cm?cmnd=Power%20On
+
+#radon
+ 1006  curl http://192.168.1.87/cm?cmnd=Power1%20On
+ 1006  curl http://192.168.1.87/cm?cmnd=Power1%20Off
+
+#aux
+ 1006  curl http://192.168.1.87/cm?cmnd=Power2%20On
+ 1006  curl http://192.168.1.87/cm?cmnd=Power2%20Off
+
+#status
+ 1006  curl http://192.168.1.87/cm?cmnd=Power2
+
+curl -X GET 192.168.1.101:8080/render?target=house.environment.airthings.RnSTA\&from=-1min\&format=json
+
+[{"target": "house.environment.airthings.RnSTA", "tags": {"name": "house.environment.airthings.RnSTA"}, "datapoints": [[1.08108108108, 1655934780]]}]
+
+
