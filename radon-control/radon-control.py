@@ -61,11 +61,11 @@ except:
 ################################################################################
 def report_fan_status(status):
     now = str(int( time.time() ))
-    message = fan_status_metric + ' ' + str(state) + ' ' + now
+    message = fan_status_metric + ' ' + str(status) + ' ' + now
     message = ''.join(message) + '\n' #all lines must end in a newline
     #print("sending message")
     #print(message)
-    sock.sendall(message)
+    sock.sendall(message.encode())
 
 
 
