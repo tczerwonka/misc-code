@@ -22,7 +22,7 @@
 #       turn off fan
 ################################################################################
 #goes in crontab
-* * * * * /home/timc/radon-control/radon-control.py
+#* * * * * /home/timc/misc-code/radon-control/radon-control.py
 ################################################################################
 #2022 T Czerwonka tczerwonka@gmail.com
 ################################################################################
