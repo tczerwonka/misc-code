@@ -29,7 +29,7 @@
 import sys
 import os
 import time
-import socket
+from socket import socket
 import requests
 
 statshost='192.168.1.101:8080'
@@ -38,10 +38,39 @@ radon_trigger=2       #if 2 or over turn on fan
 
 fan_control_url='http://192.168.1.87/cm?cmnd='
 fan_relay='POWER1'
-#for testing, power2 is the aux, power1 is the radon system
+#for testing, POWER2 is the aux, POWER1 is the radon system
 
 fan_on_file='/home/timc/radon_fan_ontime'
+#fan_on_file='/home/timc/radon_fan_ontime2'
 fan_minimum_duration=3600
+
+CARBON_SERVER = '127.0.0.1'
+CARBON_PORT = 2003
+fan_status_metric = 'house.environment.radonfan.status'
+
+sock = socket()
+try:
+    sock.connect( (CARBON_SERVER,CARBON_PORT) )
+except:
+    print("Couldn't connect to %(server)s on port %(port)d, is carbon-agent.py running?" % { 'server':CARBON_SERVER, 'port':CARBON_PORT })
+
+
+
+################################################################################
+#report fan status
+################################################################################
+def report_fan_status(status):
+    now = str(int( time.time() ))
+    message = fan_status_metric + ' ' + str(state) + ' ' + now
+    message = ''.join(message) + '\n' #all lines must end in a newline
+    #print("sending message")
+    #print(message)
+    sock.sendall(message)
+
+
+
+
+
 
 
 ################################################################################
@@ -115,6 +144,10 @@ def read_fan_state_file():
 
 
 ################################################################################
+#fan_status:
+#   0 - off
+#   1 - on
+#   2 - holdoff
 ################################################################################
 def main():
     if (check_radon_value()):
@@ -126,6 +159,7 @@ def main():
         else:
             #radon high - turn fan on
             set_fan_state('on')
+            report_fan_status(1)
             write_fan_state_file()
     else:
         #radon is low, check fan state
@@ -139,10 +173,12 @@ def main():
             fan_on_time = (now - read_fan_state_file())
             if (fan_on_time < fan_minimum_duration):
                 print("Rn below threshhold, fan on for %ss, %ss remaining, exiting." % (fan_on_time, (fan_minimum_duration - fan_on_time)))
+                report_fan_status(2)
                 sys.exit(0)
             else:
                 print("Rn below threshhold, turning fan off.")
                 set_fan_state('off')
+                report_fan_status(0)
                 sys.exit(0)
 
     sys.exit(0)
