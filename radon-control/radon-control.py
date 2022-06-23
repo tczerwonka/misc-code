@@ -155,6 +155,7 @@ def main():
         if (check_fan_state() == 1):
             #state is high, exit
             print("\tfan already on, exiting.")
+            report_fan_status(1)
             sys.exit(0)
         else:
             #radon high - turn fan on
@@ -166,6 +167,7 @@ def main():
         if (check_fan_state() == 0):
             print("Rn low, fan off, exiting.")
             #fan off, radon low, do nothing
+            report_fan_status(0)
             sys.exit(0)
         else:
             #fan on, radon low, turn off fan IFF on for at least holdoff
