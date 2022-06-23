@@ -42,7 +42,7 @@ fan_relay='POWER1'
 
 fan_on_file='/home/timc/radon_fan_ontime'
 #fan_on_file='/home/timc/radon_fan_ontime2'
-fan_minimum_duration=3600
+fan_minimum_duration=7200
 
 CARBON_SERVER = '127.0.0.1'
 CARBON_PORT = 2003
@@ -83,7 +83,7 @@ def check_radon_value():
     base_url= ''.join([base_url, statshost])
     base_url= ''.join([base_url, '/render?target='])
     base_url= ''.join([base_url, metric])
-    base_url= ''.join([base_url, '&from=-1min&format=json'])
+    base_url= ''.join([base_url, '&from=-2min&format=json'])
     r = requests.get(base_url)
     data = r.json()[0]
     radon_level = data['datapoints'][0][0]
@@ -159,8 +159,8 @@ def main():
             sys.exit(0)
         else:
             #radon high - turn fan on
-            set_fan_state('on')
             report_fan_status(1)
+            set_fan_state('on')
             write_fan_state_file()
     else:
         #radon is low, check fan state
@@ -179,8 +179,8 @@ def main():
                 sys.exit(0)
             else:
                 print("Rn below threshhold, turning fan off.")
-                set_fan_state('off')
                 report_fan_status(0)
+                set_fan_state('off')
                 sys.exit(0)
 
     sys.exit(0)
