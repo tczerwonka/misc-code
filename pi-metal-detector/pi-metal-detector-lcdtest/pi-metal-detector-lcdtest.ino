@@ -21,33 +21,14 @@
 #include <LiquidCrystal.h>
 #include <LcdBarGraph.h>
 #define max_ampAverage 200
-LiquidCrystal lcd(6, 10, 9, 14, 15, 16);
+LiquidCrystal lcd(9, 8, 7, 6, 5, 4);
 
 //LiquidCrystal(rs, enable, d4, d5, d6, d7)
 
 
 LcdBarGraph lbg(&lcd, 16, 0, 1);
 
-#define TIMER1_TOP  (259)        // can adjust this to fine-tune the frequency to get the coil tuned (see above)
 
-#define USE_3V3_AREF  (1)        // set to 1 of running on an Arduino with USB power, 0 for an embedded atmega28p with no 3.3V supply available
-
-// Digital pin definitions
-// Digital pin 0 not used, however if we are using the serial port for debugging then it's serial input
-const int debugTxPin = 1;        // transmit pin reserved for debugging
-const int encoderButtonPin = 2;  // encoder button, also IN0 for waking up from sleep mode
-const int earpiecePin = 3;       // earpiece, aka OCR2B for tone generation
-const int T0InputPin = 4;
-const int coilDrivePin = 5;
-const int T0OutputPin = 17;
-
-const int LcdRsPin = 6;
-const int LcdEnPin = 10;
-const int LcdPowerPin = 8;       // LCD power and backlight enable
-const int lcdD4Pin = 9;
-const int lcdD5Pin = 14;         // pins 11-13 also used for ICSP
-const int LcdD6Pin = 15;
-const int LcdD7Pin = 16;
 
 
 
@@ -60,12 +41,14 @@ void setup()
   //test
   lcd.setCursor(0, 0);
   lcd.print("test...  ");
-  Serial.println("test");
+  delay(1000);
+  Serial.println("test-setyp");
 }
 
 
 
 void loop()
 {
-  
+    Serial.println("test");
+  delay(1000);
 }

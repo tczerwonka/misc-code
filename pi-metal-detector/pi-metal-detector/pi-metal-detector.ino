@@ -1,5 +1,15 @@
 // Induction balance metal detector
 
+//https://www.hackster.io/mircemk/diy-sensitive-arduino-ib-metal-detector-with-discrimination-b55e9d
+//https://www.hackster.io/mircemk/diy-sensitive-arduino-ib-metal-detector-with-discrimination-b55e9d
+
+//see also
+//https://github.com/dc42/arduino/blob/master/MetalDetector/MetalDetector.ino
+
+//64 turns of #36 (what I had) on a 4" form:
+//1314uH, 32.3 ohms
+//1328uH, 32.4 ohms
+
 // We run the CPU at 16MHz and the ADC clock at 1MHz. ADC resolution is reduced to 8 bits at this speed.
 
 // Timer 1 is used to divide the system clock by about 256 to produce a 62.5kHz square wave.
@@ -21,32 +31,34 @@
 #include <LiquidCrystal.h>
 #include <LcdBarGraph.h>
 #define max_ampAverage 200
-LiquidCrystal lcd(6, 10, 9, 14, 15, 16);
+LiquidCrystal lcd(9, 8, 7, 6, 5, 4);
 LcdBarGraph lbg(&lcd, 16, 0, 1);
 
 #define TIMER1_TOP  (259)        // can adjust this to fine-tune the frequency to get the coil tuned (see above)
 
-#define USE_3V3_AREF  (1)        // set to 1 of running on an Arduino with USB power, 0 for an embedded atmega28p with no 3.3V supply available
+#define USE_3V3_AREF  (0)        // set to 1 of running on an Arduino with USB power, 0 for an embedded atmega28p with no 3.3V supply available
 
 // Digital pin definitions
 // Digital pin 0 not used, however if we are using the serial port for debugging then it's serial input
 const int debugTxPin = 1;        // transmit pin reserved for debugging
-const int encoderButtonPin = 2;  // encoder button, also IN0 for waking up from sleep mode
-const int earpiecePin = 3;       // earpiece, aka OCR2B for tone generation
-const int T0InputPin = 4;
-const int coilDrivePin = 5;
-const int T0OutputPin = 17;
+const int encoderButtonPin = 16;  // encoder button, also IN0 for waking up from sleep mode
+const int earpiecePin = 14;       // earpiece, aka OCR2B for tone generation
+const int T0InputPin = 2;
+const int T0OutputPin = 3;
+const int coilDrivePin = 10;
 
-const int LcdRsPin = 6;
-const int LcdEnPin = 10;
-const int LcdPowerPin = 8;       // LCD power and backlight enable
-const int lcdD4Pin = 9;
-const int lcdD5Pin = 14;         // pins 11-13 also used for ICSP
-const int LcdD6Pin = 15;
-const int LcdD7Pin = 16;
+//arduino 32u4 interrupt pins -- only  0,1,2,3,7 -- well, shit.
+
+const int LcdRsPin = 9;
+const int LcdEnPin = 8;
+//const int LcdPowerPin = 8;       // LCD power and backlight enable
+const int lcdD4Pin = 7;
+const int lcdD5Pin = 6;         // pins 11-13 also used for ICSP
+const int LcdD6Pin = 5;
+const int LcdD7Pin = 4;
 
 // Analog pin definitions
-const int receiverInputPin = 0;
+const int receiverInputPin = A0;
 const int encoderAPin = A1;
 const int encoderBpin = A2;
 // Analog pins 3-5 not used
@@ -80,18 +92,26 @@ float threshold = 5.0;          // lower = greater sensitivity. 10 is just about
 
 void setup()
 {
+
+  Serial.begin(19200);
   lcd.begin(16, 2);// LCD 16X2
+  lcd.clear();
   pinMode(encoderButtonPin, INPUT_PULLUP);
   digitalWrite(T0OutputPin, LOW);
   pinMode(T0OutputPin, OUTPUT);       // pulse pin from timer 1 used to feed timer 0
   digitalWrite(coilDrivePin, LOW);
   pinMode(coilDrivePin, OUTPUT);      // timer 0 output, square wave to drive transmit coil
+    lcd.print("0");
+
 
   cli();
   // Stop timer 0 which was set up by the Arduino core
   TCCR0B = 0;        // stop the timer
   TIMSK0 = 0;        // disable interrupt
   TIFR0 = 0x07;      // clear any pending interrupt
+
+    lcd.print("1");
+
 
   // Set up ADC to trigger and read channel 0 on timer 1 overflow
 #if USE_3V3_AREF
@@ -102,6 +122,8 @@ void setup()
   ADCSRB = (1 << ADTS2) | (1 << ADTS1);   // auto-trigger ADC on timer/counter 1 overflow
   ADCSRA = (1 << ADEN) | (1 << ADSC) | (1 << ADATE) | (1 << ADPS2);  // enable adc, enable auto-trigger, prescaler = 16 (1MHz ADC clock)
   DIDR0 = 1;
+
+    lcd.print("2");
 
   // Set up timer 1.
   // Prescaler = 1, phase correct PWM mode, TOP = ICR1A
@@ -117,6 +139,8 @@ void setup()
   TIFR1 = 0x07;      // clear any pending interrupt
   TIMSK1 = (1 << TOIE1);
 
+    lcd.print("3");
+
   // Set up timer 0
   // Clock source = T0, fast PWM mode, TOP (OCR0A) = 7, PWM output on OC0B
   TCCR0A = (1 << COM0B1) | (1 << WGM01) | (1 << WGM00);
@@ -126,11 +150,13 @@ void setup()
   TCNT0 = 0;
   sei();
 
+    lcd.print("4");
+
   while (!sampleReady) {}    // discard the first sample
   misses = 0;
   sampleReady = false;
+    lcd.print("5");
 
-  Serial.begin(19200);
 
 }
 
@@ -140,6 +166,7 @@ void setup()
 // We now read the ADC in the timer interrupt routine instead of having a separate comversion complete interrupt.
 ISR(TIMER1_OVF_vect)
 {
+  //nlcd.print("a");
   ++ticks;
   uint8_t ctr = TCNT0;
   int16_t val = (int16_t)(uint16_t)ADCH;    // only need to read most significant 8 bits
@@ -177,6 +204,7 @@ ISR(TIMER1_OVF_vect)
 
 void loop()
 {
+
   while (!sampleReady) {}
   uint32_t oldTicks = ticks;
 
