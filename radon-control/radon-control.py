@@ -36,13 +36,13 @@ statshost='192.168.1.101:8080'
 metric='house.environment.airthings.RnSTA'
 radon_trigger=2       #if 2 or over turn on fan
 
-fan_control_url='http://192.168.1.87/cm?cmnd='
+fan_control_url='http://192.168.1.41/cm?cmnd='
 fan_relay='POWER1'
 #for testing, POWER2 is the aux, POWER1 is the radon system
 
 fan_on_file='/home/timc/radon_fan_ontime'
 #fan_on_file='/home/timc/radon_fan_ontime2'
-fan_minimum_duration=7200
+fan_minimum_duration=21600
 
 CARBON_SERVER = '127.0.0.1'
 CARBON_PORT = 2003
