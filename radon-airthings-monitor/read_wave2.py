@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 # MIT License
 #
 # Copyright (c) 2018 Airthings AS
