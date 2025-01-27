@@ -186,6 +186,13 @@ while True:
     tmp = int(params[7], 16)
     foo = ''.join(('house.gpsdo.accum_frq_diff ', str(tmp)))
     carbondata.append("%s %d" % (foo,now))
+    #but this is 2SC
+    #0002 -> 2
+    #FFFE -> -1
+    if tmp > 32767:
+        tmp = -65535 + tmp
+    foo = ''.join(('house.gpsdo.accum_frq_diff_2sc ', str(tmp)))
+    carbondata.append("%s %d" % (foo,now))
 
     ########################################
     #U|U|02013|.|.|67F4|0002|FFE8|00FF|0D
