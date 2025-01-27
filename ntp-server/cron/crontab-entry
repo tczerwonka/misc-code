@@ -1,0 +1,3 @@
+@reboot sleep 30; /usr/bin/screen -d -m -S gpsdo /home/timc/ve2zaz-logger-forever.sh 
+@reboot sleep 30; /usr/bin/screen -d -m -S lcd /home/timc/lcd-display-forever.sh 
+* * * * * /home/timc/gpsdo-1wtemp.py
