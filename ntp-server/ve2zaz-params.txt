@@ -1,0 +1,42 @@
+L|U|0217E|.|.|6802|006B|000D|1786|00
+L|U|0217E|.|.|67FD|006C|000C|1787|00
+
+
+?
+P
+
+S0289|F08|L02|H07|WA0|N02|O02|X01|M01
+
+L|U|0217E|.|.|67FF|0070|000C|178B|00
+L|U|0217E|.|.|6800|0071|000C|178C|00
+L|U|0217E|.|.|6804|0072|000D|178D|00
+
+C
+#Tue 28 Jan 10:21:42 CST 2025
+#increase the fine / coarse threshhold from F08 to F10
+F10
+
+S0289|F10|L02|H07|WA0|N02|O02|X01|M01
+
+
+ USER COMMANDS
+?     Send this menu
+A     Clear Alarms
+C     Clear sample cntr
+D     Disable FLL
+E     Enable FLL
+Fxx   Set Fine-Coarse thres
+Hxx   Set Holdover thres
+Lxx   Set Lock Limit thres
+Mxx   Set FLL Avrging mode
+Nxx   Set Freq Chg Negate thres
+Oxx   Set 10MHz Output mode
+P     Send Param Info
+R     Reset CPU
+Syyzz Set Avrging Sample Size
+Tyyzz Tune DAC
+V     Send Ver. Info
+Wxx   Set Holdover Wait
+Xxx   Set VCXO slope sign
+
+
