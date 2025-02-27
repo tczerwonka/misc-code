@@ -1,0 +1,61 @@
+apt install -y git rsyslog collectd screen
+
+apt install -y chrony gpsd python3-pip ubxtool pps-tools gpsd-clients
+sudo cp chrony/gps.conf /etc/chrony/conf.d/
+
+dpkg --remove nano
+
+apt install python3-smbus2 python3-serial python3-gps
+sudo pip3 install RPLCD ==breal=suste,=[aclages
+
+cp code/* ~/
+
+sudo nmcli c mod "Wired connection 1" ipv4.addresses 192.168.1.7/24 ipv4.method manual
+sudo nmcli con mod "Wired connection 1" ipv4.gateway 192.168.1.1
+sudo nmcli con mod "Wired connection 1" ipv4.dns "8.8.8.8,1.1.1.1"
+
+#run gpsmon to makesure gpsd is running
+
+sudo apt install picocom
+picocom -b 4800 /dev/ttyS0
+
+
+#rsyslog
+/etc/rsyslog.conf -- after rules, comment out local, add this
+*.*  action(type="omfwd" target="192.168.1.101" port="514" protocol="tcp"
+            action.resumeRetryCount="100"
+            queue.type="linkedList" queue.size="10000")
+
+
+
+#add commit=600 to fstab
+PARTUUID=46a19a14-02  /               ext4    defaults,noatime,commit=600  0       1
+
+
+pps:
+#add to /etc/modules
+pps-gpio
+
+#add to /boot/firmware/config.txt
+dtoverlay=pps-gpio,gpiopin=18
+
+
+#test
+ppstest /dev/pps0
+cgps
+gpsmon
+
+
+#add to /etc/default/gpsd
+START_DAEMON="true"
+DEVICES="/dev/ttyACM0 /dev/pps0"
+
+# Other options you want to pass to gpsd
+GPSD_OPTIONS="-n"
+
+
+
+####
+chronyc sources
+
+#copy collectd.conf to /etc/collectd
